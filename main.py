@@ -15,8 +15,6 @@ def get_workbook():
     workbook=client.open_by_key(sheet_id)
     return workbook
 
-workbook=get_workbook()
-sheet=workbook.sheet1
 
 def get_adjacent_cells_for(dataFrame,col_string):
    # Step 1: Find rows that contain "Mobile"
@@ -32,6 +30,9 @@ def get_adjacent_cells_for(dataFrame,col_string):
     return column_counts.sum()
 
 def do_data_sort():
+
+    workbook=get_workbook()
+    sheet=workbook.sheet1
     data=sheet.get_all_values()
     headers=data.pop(0)
     df=pd.DataFrame(data,columns=headers)
@@ -60,7 +61,7 @@ def do_data_sort():
     out_head = {k: out_industries[k] for k in list(out_industries)[:5]}
     employees=[]
     for ind in out_head:
-        e=Employee(ind)
+        e=Employee(ind,0,[0,])
         op=get_adjacent_cells_for(df,ind)
         e.update_output(op)
         employees.append(e)
@@ -73,8 +74,29 @@ def do_data_sort():
     metadata["FilledCells"]=int(t_filled_cells)
     metadata["EmptyCells"]=int(t_empty_cells)
     metadata["Industries"]=out_industries
+
+
+
     IO.write_meta_data(metadata)
 
+    all_employee_data=[]
+
+    for e in employees:
+        all_employee_data.append(e.obj_to_dict())
+
+    print(all_employee_data)
+
+    loaded_employees=[]
+    for ed in all_employee_data:
+        e = Employee(**ed)
+        loaded_employees.append(e)
+
+
+    print(loaded_employees)
+
+
+    for le in loaded_employees:
+        le.print_output()
 
 
 
