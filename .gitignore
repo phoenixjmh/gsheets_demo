@@ -2,4 +2,7 @@ output.txt
 __pycache__
 deb.json
 run.sh
+.DS_Store
+res/creds.json
+*.xlsx
 
